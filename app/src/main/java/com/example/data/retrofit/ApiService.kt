@@ -1,8 +1,8 @@
-package com.example.cryptoapp2.retrofit
+package com.example.data.retrofit
 
 
-import com.example.cryptoapp2.pojo.CoinsResponse
-import com.example.cryptoapp2.pojo.DetailOfCoinsResponse
+import com.example.domain.entity.CoinsResponse
+import com.example.domain.entity.DetailOfCoinsResponse
 import io.reactivex.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

@@ -1,4 +1,4 @@
-package com.example.cryptoapp2.utils
+package com.example.data.utils
 
 import java.sql.Date
 import java.sql.Timestamp

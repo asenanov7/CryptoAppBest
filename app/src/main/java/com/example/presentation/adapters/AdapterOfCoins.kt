@@ -1,4 +1,4 @@
-package com.example.cryptoapp2.adapters
+package com.example.presentation.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.cryptoapp2.R
-import com.example.cryptoapp2.pojo.CoinPriceInfo
+import com.example.domain.entity.CoinPriceInfo
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_coin_on_list.view.*
 
@@ -48,7 +48,7 @@ class AdapterOfCoins:Adapter<AdapterOfCoins.CoinInfoViewHolder>() {
     override fun getItemCount() = listOfCoinsPrice.size
 
     interface CoinCardClickListener{
-        fun click(CoinPriceInfo:CoinPriceInfo)
+        fun click(CoinPriceInfo: CoinPriceInfo)
     }
-    lateinit var bridge:CoinCardClickListener
+    lateinit var bridge: CoinCardClickListener
 }

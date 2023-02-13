@@ -1,8 +1,8 @@
-package com.example.cryptoapp2.pojo
+package com.example.domain.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.cryptoapp2.utils.convertTimeStamp
+import com.example.data.utils.convertTimeStamp
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 

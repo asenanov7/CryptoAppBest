@@ -1,4 +1,4 @@
-package com.example.cryptoapp2.activityies
+package com.example.presentation.activityies
 
 
 
@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.cryptoapp2.R
-import com.example.cryptoapp2.adapters.AdapterOfCoins
-import com.example.cryptoapp2.pojo.CoinPriceInfo
-import com.example.cryptoapp2.viewmodels.CoinViewModel
+import com.example.presentation.adapters.AdapterOfCoins
+import com.example.domain.entity.CoinPriceInfo
+import com.example.presentation.viewmodels.CoinViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

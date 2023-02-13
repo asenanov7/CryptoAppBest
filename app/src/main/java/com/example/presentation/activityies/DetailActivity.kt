@@ -1,4 +1,4 @@
-package com.example.cryptoapp2.activityies
+package com.example.presentation.activityies
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.cryptoapp2.R
-import com.example.cryptoapp2.pojo.CoinPriceInfo
-import com.example.cryptoapp2.viewmodels.CoinViewModel
+import com.example.domain.entity.CoinPriceInfo
+import com.example.presentation.viewmodels.CoinViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 

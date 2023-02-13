@@ -1,13 +1,13 @@
-package com.example.cryptoapp2.viewmodels
+package com.example.presentation.viewmodels
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.cryptoapp2.pojo.CoinPriceInfo
-import com.example.cryptoapp2.pojo.DetailOfCoinsResponse
-import com.example.cryptoapp2.retrofit.ApiFactory
-import com.example.cryptoapp2.room.DatabaseCoins
+import com.example.domain.entity.CoinPriceInfo
+import com.example.domain.entity.DetailOfCoinsResponse
+import com.example.data.retrofit.ApiFactory
+import com.example.data.room.DatabaseCoins
 import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -27,7 +27,7 @@ class CoinViewModel(application: Application):AndroidViewModel(application) {
             .map { it.listOfCoins?.map { it?.coinInfo?.name }?.joinToString(",") }
             .flatMap { ApiFactory.apiService.getFullPriceList(fromSym = it) }
             .map { getPriceInfoListFromDetailOfCoinsResponse(it) }
-            .delaySubscription(10, TimeUnit.SECONDS)//Задержка на логику на всю цепочку. А делай только на подписку
+            .delaySubscription(10, TimeUnit.SECONDS) //Делает задержку на подписку, а не на консумеры
             .repeat()
             .retry()
             .subscribeOn(Schedulers.io())
@@ -35,13 +35,14 @@ class CoinViewModel(application: Application):AndroidViewModel(application) {
                 { dbDao.insertDataOnDatabase(it) ; Log.d("TAG", "Insert data on db")},
                 { Log.d("TAG", "loadData: Bad:${it.message}")  }
             )
+        // Раз в 10 секунд я делаю загрузку фильмов и сразу устанавливаю их в базу данных,
+        // а в активити уже через метод БД возвращающий ЛД, отображаю изменения в курсе
 
         compositeDisposable.add(disposable)
     }
 
     private fun getPriceInfoListFromDetailOfCoinsResponse(detailOfCoinsResponse: DetailOfCoinsResponse): List<CoinPriceInfo> {
             val result:MutableList<CoinPriceInfo> = mutableListOf()
-
             val jsonObject = detailOfCoinsResponse.coinPriceInfoJsonObject?:return result
 
 
