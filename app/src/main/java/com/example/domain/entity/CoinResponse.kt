@@ -8,8 +8,3 @@ data class CoinsResponse(        //CoinInfoListOfData
     @SerializedName("Data")
     val listOfCoins:List<Coin?>? = null
 )
-
-
-
-
-
