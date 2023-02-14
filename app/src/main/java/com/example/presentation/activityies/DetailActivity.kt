@@ -12,6 +12,7 @@ import com.example.presentation.viewmodels.CoinViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 
+/*
 class DetailActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,4 +43,4 @@ class DetailActivity : AppCompatActivity() {
             return intent
         }
     }
-}
+}*/

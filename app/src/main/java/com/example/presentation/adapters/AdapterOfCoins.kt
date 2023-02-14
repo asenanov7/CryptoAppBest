@@ -1,6 +1,7 @@
 package com.example.presentation.adapters
 
 import android.annotation.SuppressLint
+import android.util.TimeUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.cryptoapp2.R
+import com.example.data.utils.getFormattedLastUpdateTime
+import com.example.data.utils.getFullImage
 import com.example.domain.entity.CoinPriceInfo
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_coin_on_list.view.*
+import java.util.concurrent.TimeUnit
 
 class AdapterOfCoins:Adapter<AdapterOfCoins.CoinInfoViewHolder>() {
     inner class CoinInfoViewHolder(itemView: View):ViewHolder(itemView){
@@ -38,8 +42,8 @@ class AdapterOfCoins:Adapter<AdapterOfCoins.CoinInfoViewHolder>() {
         with(holder) {
             textViewNameOfCoin.text = coinPriceInfo.fromSymbol+'/'+coinPriceInfo.toSymbol
             textViewPriceOfCoin.text = coinPriceInfo.price
-            textViewLatestUpdate.text = holder.itemView.context.getString(R.string._latestUpdateTime)+" "+ coinPriceInfo.getFormattedLastUpdateTime()
-            Picasso.get().load(coinPriceInfo.getFullImage()).into(imageViewCoin)
+            textViewLatestUpdate.text = holder.itemView.context.getString(R.string._latestUpdateTime)+" "+ getFormattedLastUpdateTime(coinPriceInfo.lastUpdate)
+            Picasso.get().load(getFullImage(coinPriceInfo.imageUrl)).into(imageViewCoin)
 
             itemView.setOnClickListener { bridge.click(coinPriceInfo) }
         }

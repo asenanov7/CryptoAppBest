@@ -1,71 +1,18 @@
 package com.example.presentation.viewmodels
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import com.example.domain.entity.CoinPriceInfo
-import com.example.domain.entity.DetailOfCoinsResponse
-import com.example.data.retrofit.ApiFactory
-import com.example.data.room.DatabaseCoins
-import com.google.gson.Gson
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import androidx.lifecycle.viewModelScope
+import com.example.data.RepositoryImpl
+import com.example.domain.GetTopCoinsUseCase
+import com.example.domain.Repository
+import kotlinx.coroutines.launch
 
 class CoinViewModel(application: Application):AndroidViewModel(application) {
 
-    private val dbDao = DatabaseCoins.getInstance(application).getDao()
+    private val repository = RepositoryImpl(application)
+    private val getTopCoinsUseCase = GetTopCoinsUseCase(repository)
 
-    val priceList = dbDao.getPriceList()
-    fun getDetailInfo(fSym:String): LiveData<CoinPriceInfo> = dbDao.getPriceInfoAboutCoin(fSym)
-
-    private val compositeDisposable = CompositeDisposable()
-
-    private fun loadData(){
-        val disposable = ApiFactory.apiService.getTopCoins()
-            .map { it.listOfCoins?.map { it?.coinInfo?.name }?.joinToString(",") }
-            .flatMap { ApiFactory.apiService.getFullPriceList(fromSym = it) }
-            .map { getPriceInfoListFromDetailOfCoinsResponse(it) }
-            .delaySubscription(10, TimeUnit.SECONDS) //Делает задержку на подписку, а не на консумеры
-            .repeat()
-            .retry()
-            .subscribeOn(Schedulers.io())
-            .subscribe(
-                { dbDao.insertDataOnDatabase(it) ; Log.d("TAG", "Insert data on db")},
-                { Log.d("TAG", "loadData: Bad:${it.message}")  }
-            )
-        // Раз в 10 секунд я делаю загрузку фильмов и сразу устанавливаю их в базу данных,
-        // а в активити уже через метод БД возвращающий ЛД, отображаю изменения в курсе
-
-        compositeDisposable.add(disposable)
-    }
-
-    private fun getPriceInfoListFromDetailOfCoinsResponse(detailOfCoinsResponse: DetailOfCoinsResponse): List<CoinPriceInfo> {
-            val result:MutableList<CoinPriceInfo> = mutableListOf()
-            val jsonObject = detailOfCoinsResponse.coinPriceInfoJsonObject?:return result
-
-
-            val coinKeySet = jsonObject.keySet()                                  //Получаем ключи криптовалют /BTC,ETH,BUSD,USDT,XRP,SOL,DOGE,LTC,ETC,BNB/
-            for (coinKey in coinKeySet){                                                      //для каждого ключа криптовалюты
-                val currencyJson = jsonObject.getAsJsonObject(coinKey)                    //получаем Json объект по ключу криптовалюты
-                val currencyKeySet = currencyJson.keySet()                        //У полученного нами объекта, получаем вложенные ключи(валюты) /USD,EUR/
-                for (currencyKey in currencyKeySet ){                                         //и уже по ключу каждой валюты
-                    val coinPriceInfo = Gson().fromJson(currencyJson.getAsJsonObject(currencyKey), CoinPriceInfo::class.java) //создаем объект нашего класса
-                    result.add(coinPriceInfo)
-                }
-            }
-        return result
-    }
-
-
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.dispose()
-    }
-    init {
-        loadData()
-    }
+    suspend fun getTopCoinsLD() = getTopCoinsUseCase()
 
 }

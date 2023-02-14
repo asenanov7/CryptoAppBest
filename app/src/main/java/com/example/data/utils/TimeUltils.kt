@@ -16,3 +16,10 @@ fun convertTimeStamp(sec:Long):String{
 
 
 }
+fun getFormattedLastUpdateTime(lastUpdate:String): String {
+    return convertTimeStamp(lastUpdate.toLong())
+}
+
+fun getFullImage(imageUrl:String):String{
+    return "https://cryptocompare.com$imageUrl"
+}

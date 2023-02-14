@@ -10,6 +10,9 @@ import com.example.presentation.adapters.AdapterOfCoins
 import com.example.domain.entity.CoinPriceInfo
 import com.example.presentation.viewmodels.CoinViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,14 +27,17 @@ class MainActivity : AppCompatActivity() {
         adapterOfCoins = AdapterOfCoins()
         rvCoinPriceList.adapter = adapterOfCoins
 
-        adapterOfCoins.bridge = object : AdapterOfCoins.CoinCardClickListener {
+    /*    adapterOfCoins.bridge = object : AdapterOfCoins.CoinCardClickListener {
             override fun click(CoinPriceInfo: CoinPriceInfo){
                 startActivity(DetailActivity.newIntent(this@MainActivity, CoinPriceInfo))
             }
-        }
+        }*/
 
-        viewModel.priceList.observe(this){
+        val scope = CoroutineScope(Dispatchers.Main)
+        scope.launch {
+        viewModel.getTopCoinsLD().observe(this@MainActivity) {
             adapterOfCoins.listOfCoinsPrice = it
+        }
         }
     }
 
