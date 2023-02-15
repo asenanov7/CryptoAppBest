@@ -56,6 +56,9 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.71828'  //Picasso загрузка изображение по ссылке
 
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1' //lifecycle activity
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1" //view-model Scope
+
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'

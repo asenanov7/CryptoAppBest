@@ -9,4 +9,6 @@ interface Repository {
 
     suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>>
 
+    suspend fun getDetailInfoAboutSingleCoin(coinSym:String): LiveData<CoinPriceInfo>
+
 }

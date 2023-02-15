@@ -5,7 +5,7 @@ import com.example.domain.entity.CoinPriceInfo
 
 class MapperDB {
 
-    fun mapEntityToDbModel(coinPriceInfo: CoinPriceInfo): DbModelCoinPriceInfo{
+    fun mapEntityToDbModel(coinPriceInfo: CoinPriceInfo): DbModelCoinPriceInfo {
         return DbModelCoinPriceInfo(
             coinPriceInfo.fromSymbol,
             coinPriceInfo.toSymbol,
@@ -104,10 +104,9 @@ class MapperDB {
     }
 
     fun mapListEntityToListDBModelCoinPriceInfo(coinPriceInfoList: List<CoinPriceInfo>)
-            :List<DbModelCoinPriceInfo>{
+            : List<DbModelCoinPriceInfo> {
         return coinPriceInfoList.map { mapEntityToDbModel(it) }
     }
-
 
 
 

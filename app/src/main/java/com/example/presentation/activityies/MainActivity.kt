@@ -1,14 +1,13 @@
 package com.example.presentation.activityies
 
 
-
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.cryptoapp2.R
 import com.example.presentation.adapters.AdapterOfCoins
-import com.example.domain.entity.CoinPriceInfo
-import com.example.presentation.viewmodels.CoinViewModel
+import com.example.presentation.viewmodels.ListOfCoinsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,36 +15,28 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: ListOfCoinsViewModel
     private lateinit var adapterOfCoins: AdapterOfCoins
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(this)[ListOfCoinsViewModel::class.java]
         adapterOfCoins = AdapterOfCoins()
         rvCoinPriceList.adapter = adapterOfCoins
 
-    /*    adapterOfCoins.bridge = object : AdapterOfCoins.CoinCardClickListener {
-            override fun click(CoinPriceInfo: CoinPriceInfo){
-                startActivity(DetailActivity.newIntent(this@MainActivity, CoinPriceInfo))
-            }
-        }*/
+       adapterOfCoins.coinCardClickListener = {
+            startActivity(DetailActivity.newIntent(this@MainActivity, it))
+        }
 
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
-        viewModel.getTopCoinsLD().observe(this@MainActivity) {
-            adapterOfCoins.listOfCoinsPrice = it
-        }
+            viewModel.getTopCoinsLD().observe(this@MainActivity) {
+                adapterOfCoins.submitList(it)
+                Log.d("ARSEN", "submitAdapter $it ")
+            }
         }
     }
 
 }
-
-
-/*viewModel.priceList.observe(this){
-           Log.d("TAG", "$it")
-       }
-       viewModel.getDetailInfo("BTC").observe(this){
-           Log.d("TAG", "Data on db changed: $it")*/
