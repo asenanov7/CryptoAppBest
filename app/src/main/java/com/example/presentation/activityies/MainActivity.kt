@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.cryptoapp2.R
 import com.example.presentation.adapters.AdapterOfCoins
 import com.example.presentation.viewmodels.ListOfCoinsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -30,8 +29,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(DetailActivity.newIntent(this@MainActivity, it))
         }
 
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
+        lifecycleScope.launch {
             viewModel.getTopCoinsLD().observe(this@MainActivity) {
                 adapterOfCoins.submitList(it)
                 Log.d("ARSEN", "submitAdapter $it ")

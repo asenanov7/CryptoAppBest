@@ -16,24 +16,18 @@ import com.example.domain.entity.CoinPriceInfo
 import com.example.domain.entity.DetailOfCoinsResponse
 import com.google.gson.Gson
 
-class RepositoryImpl(application: Application):Repository {
+class RepositoryImpl(private val application: Application):Repository {
 
     private val mapperDB = MapperDB()
     private val mapperDTO = MapperDTO()
+
     private val api = ApiFactory.apiService
     private val dao = DatabaseCoins.getInstance(application).getDao()
 
 
     override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
-            val dtoListCoins = api.getTopCoins().listOfCoins
-            dtoListCoins?.let {
-                val namesOfCoins = it.map { it?.coinInfo?.name }.joinToString(",")
-                Log.d("ARSEN", "getTopCoins: namesOfCoins: $namesOfCoins ")
+            updateCoinsDb()
 
-                val listDetailInfo = getDetailInfoAboutCoins(namesOfCoins)
-                dao.insertDataOnDatabase(mapperDB.mapListEntityToListDBModelCoinPriceInfo(listDetailInfo))
-
-            }
             val temp = dao.getPriceList()
             val mediatorLiveData = MediatorLiveData<List<CoinPriceInfo>>()
                 .apply {
@@ -61,6 +55,17 @@ class RepositoryImpl(application: Application):Repository {
         return mediatorLiveData
     }
 
+    private suspend fun updateCoinsDb(){
+        val dtoListCoins = api.getTopCoins().listOfCoins
+        dtoListCoins?.let {
+            val namesOfCoins = it.map { it?.coinInfo?.name }.joinToString(",")
+            Log.d("ARSEN", "getTopCoins: namesOfCoins: $namesOfCoins ")
+
+            val listDetailInfo = getDetailInfoAboutCoins(namesOfCoins)
+            dao.insertDataOnDatabase(mapperDB.mapListEntityToListDBModelCoinPriceInfo(listDetailInfo))
+
+        }
+    }
     private suspend fun getDetailInfoAboutCoins(namesCoins: String): List<CoinPriceInfo> {
         val dtoDetailOfCoinsResponse = api.getFullPriceList(fromSym = namesCoins)
         val detailOfCoinsResponse =
