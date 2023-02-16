@@ -26,7 +26,7 @@ class RepositoryImpl(private val application: Application):Repository {
 
 
     override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
-            updateCoinsDb()
+            updateCoinsDb()   //!!//
 
             val temp = dao.getPriceList()
             val mediatorLiveData = MediatorLiveData<List<CoinPriceInfo>>()
@@ -55,7 +55,7 @@ class RepositoryImpl(private val application: Application):Repository {
         return mediatorLiveData
     }
 
-    private suspend fun updateCoinsDb(){
+     private suspend fun updateCoinsDb(){
         val dtoListCoins = api.getTopCoins().listOfCoins
         dtoListCoins?.let {
             val namesOfCoins = it.map { it?.coinInfo?.name }.joinToString(",")

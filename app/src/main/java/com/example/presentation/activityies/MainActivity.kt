@@ -2,39 +2,28 @@ package com.example.presentation.activityies
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.cryptoapp2.R
-import com.example.presentation.adapters.AdapterOfCoins
-import com.example.presentation.viewmodels.ListOfCoinsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.launch
+import com.example.cryptoapp2.databinding.ActivityMainBinding
+import com.example.presentation.fragments.CoinListFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ListOfCoinsViewModel
-    private lateinit var adapterOfCoins: AdapterOfCoins
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this)[ListOfCoinsViewModel::class.java]
-        adapterOfCoins = AdapterOfCoins()
-        rvCoinPriceList.adapter = adapterOfCoins
+        launchCoinListFragment()
+    }
 
-       adapterOfCoins.coinCardClickListener = {
-            startActivity(DetailActivity.newIntent(this@MainActivity, it))
-        }
-
-        lifecycleScope.launch {
-            viewModel.getTopCoinsLD().observe(this@MainActivity) {
-                adapterOfCoins.submitList(it)
-                Log.d("ARSEN", "submitAdapter $it ")
-            }
-        }
+    private fun launchCoinListFragment(){
+        val fragment = CoinListFragment.newInstanceEdit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerView, fragment)
+            .commit()
     }
 
 }
