@@ -1,4 +1,4 @@
-package com.example.cryptoapp2.utils
+package com.example.data.utils
 
 import java.sql.Date
 import java.sql.Timestamp
@@ -15,4 +15,11 @@ fun convertTimeStamp(sec:Long):String{
     return sdf.format(date)
 
 
+}
+fun getFormattedLastUpdateTime(lastUpdate:String): String {
+    return convertTimeStamp(lastUpdate.toLong())
+}
+
+fun getFullImage(imageUrl:String):String{
+    return "https://cryptocompare.com$imageUrl"
 }
