@@ -7,6 +7,7 @@ import com.example.cryptoapp2.R
 import com.example.cryptoapp2.databinding.ActivityMainBinding
 import com.example.presentation.fragments.CoinListFragment
 import com.example.presentation.fragments.DetailInfoFragment
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,12 +18,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        launchCoinListFragment()
+        val isLand = binding.fragmentContainerSecond != null
+        launchCoinListFragment(isLand)
+
 
     }
 
-    private fun launchCoinListFragment(){
-        val fragment = CoinListFragment.makeCoinListFragment()
+    private fun launchCoinListFragment(isLand:Boolean) {
+        val fragment = CoinListFragment.makeCoinListFragment(isLand)
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)

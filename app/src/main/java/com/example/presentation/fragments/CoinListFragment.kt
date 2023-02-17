@@ -13,10 +13,11 @@ import com.example.cryptoapp2.databinding.CoinListFragmentBinding
 import com.example.presentation.recycler.AdapterOfCoins
 import com.example.presentation.viewmodels.ListOfCoinsViewModel
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class CoinListFragment : Fragment() {
 
-
+    private var isLand by Delegates.notNull<Boolean>()
 
     private var _binding: CoinListFragmentBinding? = null
     private val binding: CoinListFragmentBinding
@@ -24,7 +25,16 @@ class CoinListFragment : Fragment() {
 
     private val viewModel by lazy { ViewModelProvider(requireActivity())[ListOfCoinsViewModel::class.java] }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isLand = arguments?.getBoolean(KEY_MODE)!!
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
         _binding = CoinListFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,14 +46,18 @@ class CoinListFragment : Fragment() {
         binding.rvCoinPriceList.adapter = adapterOfCoins
 
         adapterOfCoins.coinCardClickListener = {
-            launchDetailFragment(it.fromSymbol)
+            if (!isLand) {
+                launchDetailFragmentPortrait(it.fromSymbol)
+            } else {
+                launchDetailFragmentLand(it.fromSymbol)
+            }
         }
 
 
         lifecycleScope.launch {
             viewModel.getTopCoinsLD().observe(viewLifecycleOwner) {
                 adapterOfCoins.submitList(it)
-                binding.rvCoinPriceList.scrollToPosition(0)
+                binding.rvCoinPriceList.smoothScrollToPosition(0)
                 Log.d("ARSEN", "submitAdapter $it ")
             }
         }
@@ -54,7 +68,7 @@ class CoinListFragment : Fragment() {
         _binding = null
     }
 
-    private fun launchDetailFragment(fsym:String){
+    private fun launchDetailFragmentPortrait(fsym: String) {
         val fragment = DetailInfoFragment.makeDetailInfoFragment(fsym)
 
         requireActivity().supportFragmentManager.beginTransaction()
@@ -68,9 +82,23 @@ class CoinListFragment : Fragment() {
 
     }
 
-    companion object{
-        fun makeCoinListFragment(): CoinListFragment {
-            return CoinListFragment()
+    private fun launchDetailFragmentLand(fsym: String) {
+        val fragment = DetailInfoFragment.makeDetailInfoFragment(fsym)
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainerSecond, fragment)
+            .commit()
+    }
+
+    companion object {
+        private const val KEY_MODE = "keyMode"
+        fun makeCoinListFragment(isLand: Boolean): CoinListFragment {
+            return CoinListFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(KEY_MODE, isLand)
+                }
+            }
         }
     }
+
 }
