@@ -23,7 +23,8 @@ class CoinListFragment : Fragment() {
     private val binding: CoinListFragmentBinding
         get() = _binding ?: throw Exception("CoinListFragment == null")
 
-    private val viewModel by lazy { ViewModelProvider(requireActivity())[ListOfCoinsViewModel::class.java] }
+    private val viewModel
+             by lazy { ViewModelProvider(requireActivity())[ListOfCoinsViewModel::class.java] }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

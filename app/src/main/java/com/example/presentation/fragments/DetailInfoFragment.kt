@@ -12,17 +12,21 @@ import com.example.presentation.viewmodels.DetailViewModel
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 
-class DetailInfoFragment(): Fragment() {
+class DetailInfoFragment() : Fragment() {
 
     private var _binding: DetailInfoFragmentBinding? = null
     private val binding: DetailInfoFragmentBinding
-        get() = _binding ?: throw Exception("CoinListFragment == null")
+        get() = _binding ?: throw Exception("DetailInfoFragment == null")
 
     private val viewModel by lazy { ViewModelProvider(requireActivity())[DetailViewModel::class.java] }
-    private val coinsSym by lazy { requireArguments().getString(KEY_COIN_NAME) }
+    private val coinSym by lazy { requireArguments().getString(KEY_COIN_NAME) }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
         _binding = DetailInfoFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -31,19 +35,19 @@ class DetailInfoFragment(): Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            coinsSym?.let {
+            coinSym?.let {
                 viewModel.getInfoAboutSingleCoinLD(it).observe(viewLifecycleOwner) { dynamicInfo ->
-                        Picasso.get().load(dynamicInfo.imageUrl).into(binding.imageViewDetailCoin)
-                        with(dynamicInfo) {
-                            binding.textViewFsym.text = fromSymbol
-                            binding.textViewTsym.text = toSymbol
-                            binding.priceDetail.text = "Цена $price"
-                            binding.minPriceOfDay.text = "Минимум за день $lowDay"
-                            binding.maxPriceOfDay.text = "Максимум за день $highDay"
-                            binding.latestMarket.text = "Последняя сделка на $lastMarket"
-                            binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
-                        }
+                    Picasso.get().load(dynamicInfo.imageUrl).into(binding.imageViewDetailCoin)
+                    with(dynamicInfo) {
+                        binding.textViewFsym.text = fromSymbol
+                        binding.textViewTsym.text = toSymbol
+                        binding.priceDetail.text = "Цена $price"
+                        binding.minPriceOfDay.text = "Минимум за день $lowDay"
+                        binding.maxPriceOfDay.text = "Максимум за день $highDay"
+                        binding.latestMarket.text = "Последняя сделка на $lastMarket"
+                        binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
                     }
+                }
             }
         }
     }
@@ -54,13 +58,13 @@ class DetailInfoFragment(): Fragment() {
         _binding = null
     }
 
-    companion object{
+    companion object {
         private const val KEY_COIN_NAME = "FSYM"
 
-        fun makeDetailInfoFragment(coinNameFSYM :String): DetailInfoFragment {
+        fun makeDetailInfoFragment(coinNameFSYM: String): DetailInfoFragment {
             return DetailInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString(KEY_COIN_NAME, coinNameFSYM )
+                    putString(KEY_COIN_NAME, coinNameFSYM)
                 }
             }
         }
