@@ -1,6 +1,7 @@
 package com.example.data
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -53,20 +54,23 @@ class RepositoryImpl(private val application: Application):Repository {
     }
 
     override suspend fun loadData() {
-        try {
-            while (true) {
-                val dtoListCoins = api.getTopCoins().listOfCoins
-                val namesOfCoins = mapperDTO.mapDtoCoinNameListToString(dtoListCoins)
 
-                val listCoinPriceInfo = getDetailInfoAboutCoins(namesOfCoins)
-                dao.insertDataOnDatabase(
-                    mapperDB.mapListEntityToListDBModelCoinPriceInfo(
-                        listCoinPriceInfo
+            while (true) {
+                try {
+                    Log.d("test", "loadData: ")
+                    val dtoListCoins = api.getTopCoins().listOfCoins
+                    val namesOfCoins = mapperDTO.mapDtoCoinNameListToString(dtoListCoins)
+
+                    val listCoinPriceInfo = getDetailInfoAboutCoins(namesOfCoins)
+                    dao.insertDataOnDatabase(
+                        mapperDB.mapListEntityToListDBModelCoinPriceInfo(
+                            listCoinPriceInfo
+                        )
                     )
-                )
+                }catch (_:Exception){}
+                delay(10000)
             }
-        } catch (_: Exception) { }
-        delay(10000)
+
     }
 
     private suspend fun getDetailInfoAboutCoins(namesCoins: String): List<CoinPriceInfo> {

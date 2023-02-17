@@ -43,7 +43,7 @@ class CoinListFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.getTopCoinsLD().observe(viewLifecycleOwner) {
                 adapterOfCoins.submitList(it)
-                binding.rvCoinPriceList.smoothScrollToPosition(0)
+                binding.rvCoinPriceList.scrollToPosition(0)
                 Log.d("ARSEN", "submitAdapter $it ")
             }
         }
