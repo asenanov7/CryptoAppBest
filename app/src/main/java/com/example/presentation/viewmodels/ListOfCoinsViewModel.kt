@@ -19,9 +19,7 @@ class ListOfCoinsViewModel(application: Application):AndroidViewModel(applicatio
     suspend fun getTopCoinsLD() = getTopCoinsUseCase()
 
     init {
-        viewModelScope.launch {
             loadDataUseCase()
-        }
     }
 
 }

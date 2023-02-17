@@ -18,7 +18,7 @@ abstract class DatabaseCoins : RoomDatabase() {
 
         private const val NAME = "name"
 
-        fun getInstance(application: Application): DatabaseCoins {
+        fun getInstance(context: Context): DatabaseCoins {
             INSTANCE?.let {
                 return it
             }
@@ -27,7 +27,7 @@ abstract class DatabaseCoins : RoomDatabase() {
                     return it
                 }
                 val db = Room.databaseBuilder(
-                    application, DatabaseCoins::class.java, NAME).build()
+                    context, DatabaseCoins::class.java, NAME).build()
                 INSTANCE = db
                 return db
             }
