@@ -57,7 +57,7 @@ class DetailInfoFragment(): Fragment() {
     companion object{
         private const val KEY_COIN_NAME = "FSYM"
 
-        fun newInstanceEdit(coinNameFSYM :String): DetailInfoFragment {
+        fun makeDetailInfoFragment(coinNameFSYM :String): DetailInfoFragment {
             return DetailInfoFragment().apply {
                 arguments = Bundle().apply {
                     putString(KEY_COIN_NAME, coinNameFSYM )

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.cryptoapp2.R
 import com.example.cryptoapp2.databinding.ActivityMainBinding
 import com.example.presentation.fragments.CoinListFragment
+import com.example.presentation.fragments.DetailInfoFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,10 +18,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         launchCoinListFragment()
+
     }
 
     private fun launchCoinListFragment(){
-        val fragment = CoinListFragment.launchCoinListFragment()
+        val fragment = CoinListFragment.makeCoinListFragment()
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
             .commit()

@@ -55,7 +55,7 @@ class CoinListFragment : Fragment() {
     }
 
     private fun launchDetailFragment(fsym:String){
-        val fragment = DetailInfoFragment.newInstanceEdit(fsym)
+        val fragment = DetailInfoFragment.makeDetailInfoFragment(fsym)
 
         requireActivity().supportFragmentManager.beginTransaction()
             //replace нельзя ибо при возврате к этому экрану,
@@ -69,7 +69,7 @@ class CoinListFragment : Fragment() {
     }
 
     companion object{
-        fun launchCoinListFragment(): CoinListFragment {
+        fun makeCoinListFragment(): CoinListFragment {
             return CoinListFragment()
         }
     }
