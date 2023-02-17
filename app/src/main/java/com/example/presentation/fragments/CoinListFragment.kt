@@ -27,7 +27,7 @@ class CoinListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isLand = arguments?.getBoolean(KEY_MODE)!!
+        isLand = requireArguments().getBoolean(KEY_MODE)
     }
 
     override fun onCreateView(

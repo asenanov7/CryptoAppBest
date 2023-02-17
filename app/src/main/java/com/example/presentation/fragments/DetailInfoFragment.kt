@@ -19,7 +19,7 @@ class DetailInfoFragment(): Fragment() {
         get() = _binding ?: throw Exception("CoinListFragment == null")
 
     private val viewModel by lazy { ViewModelProvider(requireActivity())[DetailViewModel::class.java] }
-    private val coinsSym by lazy { arguments?.getString(KEY_COIN_NAME) }
+    private val coinsSym by lazy { requireArguments().getString(KEY_COIN_NAME) }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
