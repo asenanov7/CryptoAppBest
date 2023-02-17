@@ -3,9 +3,9 @@ package com.example.data.network
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class DtoCoin(
+data class DtoCoinNameContainer(
     @Expose
     @SerializedName("CoinInfo")
-    val coinInfo: DtoCoinInfo? = null,
+    val coinInfo: DtoCoinName? = null,
 )
 

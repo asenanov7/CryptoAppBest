@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchCoinListFragment(){
-        val fragment = CoinListFragment.newInstanceEdit()
+        val fragment = CoinListFragment.launchCoinListFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView, fragment)
             .commit()

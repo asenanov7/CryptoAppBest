@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.cryptoapp2.R
 import com.example.cryptoapp2.databinding.CoinListFragmentBinding
-import com.example.presentation.adapters.AdapterOfCoins
+import com.example.presentation.recycler.AdapterOfCoins
 import com.example.presentation.viewmodels.ListOfCoinsViewModel
 import kotlinx.coroutines.launch
 
@@ -43,6 +43,7 @@ class CoinListFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.getTopCoinsLD().observe(viewLifecycleOwner) {
                 adapterOfCoins.submitList(it)
+                binding.rvCoinPriceList.smoothScrollToPosition(0)
                 Log.d("ARSEN", "submitAdapter $it ")
             }
         }
@@ -68,7 +69,7 @@ class CoinListFragment : Fragment() {
     }
 
     companion object{
-        fun newInstanceEdit(): CoinListFragment {
+        fun launchCoinListFragment(): CoinListFragment {
             return CoinListFragment()
         }
     }

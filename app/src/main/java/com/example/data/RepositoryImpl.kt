@@ -1,20 +1,18 @@
 package com.example.data
 
 import android.app.Application
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.example.data.database.MapperDB
 import com.example.data.database.room.DatabaseCoins
-import com.example.data.network.DtoCoinPriceInfo
 import com.example.data.network.MapperDTO
 import com.example.data.network.retrofit.ApiFactory
 import com.example.data.utils.getFormattedLastUpdateTime
 import com.example.data.utils.getFullImage
 import com.example.domain.Repository
-import com.example.domain.entity.CoinPriceInfo
-import com.example.domain.entity.DetailOfCoinsResponse
-import com.google.gson.Gson
+import com.example.domain.CoinPriceInfo
+import kotlinx.coroutines.delay
 
 class RepositoryImpl(private val application: Application):Repository {
 
@@ -26,7 +24,6 @@ class RepositoryImpl(private val application: Application):Repository {
 
 
     override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
-            updateCoinsDb()   //!!//
 
             val temp = dao.getPriceList()
             val mediatorLiveData = MediatorLiveData<List<CoinPriceInfo>>()
@@ -55,45 +52,31 @@ class RepositoryImpl(private val application: Application):Repository {
         return mediatorLiveData
     }
 
-     private suspend fun updateCoinsDb(){
-        val dtoListCoins = api.getTopCoins().listOfCoins
-        dtoListCoins?.let {
-            val namesOfCoins = it.map { it?.coinInfo?.name }.joinToString(",")
-            Log.d("ARSEN", "getTopCoins: namesOfCoins: $namesOfCoins ")
+    override suspend fun loadData() {
+        try {
+            while (true) {
+                val dtoListCoins = api.getTopCoins().listOfCoins
+                val namesOfCoins = mapperDTO.mapDtoCoinNameListToString(dtoListCoins)
 
-            val listDetailInfo = getDetailInfoAboutCoins(namesOfCoins)
-            dao.insertDataOnDatabase(mapperDB.mapListEntityToListDBModelCoinPriceInfo(listDetailInfo))
-
-        }
+                val listCoinPriceInfo = getDetailInfoAboutCoins(namesOfCoins)
+                dao.insertDataOnDatabase(
+                    mapperDB.mapListEntityToListDBModelCoinPriceInfo(
+                        listCoinPriceInfo
+                    )
+                )
+            }
+        } catch (_: Exception) { }
+        delay(10000)
     }
+
     private suspend fun getDetailInfoAboutCoins(namesCoins: String): List<CoinPriceInfo> {
         val dtoDetailOfCoinsResponse = api.getFullPriceList(fromSym = namesCoins)
-        val detailOfCoinsResponse =
-            mapperDTO.mapDtoDetailOfCoinResponseToEntity(dtoDetailOfCoinsResponse)
 
         val dtoListCoinPriceInfo =
-            getPriceInfoListFromDetailOfCoinsResponse(detailOfCoinsResponse)
+            mapperDTO.mapJsonContainerToListCoinInfo(dtoDetailOfCoinsResponse)
 
-        return dtoListCoinPriceInfo.map { mapperDTO.dtoToEntity(it) }
+        return dtoListCoinPriceInfo.map { mapperDTO.mapDtoToEntity(it) }
     }
 
-
-    private fun getPriceInfoListFromDetailOfCoinsResponse(detailOfCoinsResponse: DetailOfCoinsResponse): List<DtoCoinPriceInfo> {
-        val result: MutableList<DtoCoinPriceInfo> = mutableListOf()
-        val jsonObject = detailOfCoinsResponse.coinPriceInfoJsonObject ?: return result
-
-        val coinKeySet = jsonObject.keySet()
-        for (coinKey in coinKeySet) {
-            val currencyJson = jsonObject.getAsJsonObject(coinKey)
-            val currencyKeySet = currencyJson.keySet()
-            for (currencyKey in currencyKeySet) {
-                val coinPriceInfo = Gson().fromJson(currencyJson.getAsJsonObject(currencyKey),
-                    DtoCoinPriceInfo::class.java
-                ) //создаем объект нашего класса
-                result.add(coinPriceInfo)
-            }
-        }
-        return result
-    }
 
 }

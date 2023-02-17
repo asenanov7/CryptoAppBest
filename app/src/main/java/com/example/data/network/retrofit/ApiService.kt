@@ -1,8 +1,8 @@
 package com.example.data.network.retrofit
 
 
-import com.example.data.network.DtoCoinsResponse
-import com.example.data.network.DtoDetailOfCoinsResponse
+import com.example.data.network.DtoCoinsNameList
+import com.example.data.network.DtoCoinInfoJsonContainer
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,14 +11,14 @@ interface ApiService {
     suspend fun getTopCoins(@Query(QUERY_PARAM_API_KEY) apikey: String = MY_KEY,
                     @Query(QUERY_PARAM_LIMIT) limit: Int = 10,
                     @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = "USD"
-    ): DtoCoinsResponse
+    ): DtoCoinsNameList
 
 
     @GET("pricemultifull?")
     suspend fun getFullPriceList(@Query(QUERY_PARAM_API_KEY) apikey: String = MY_KEY,
                          @Query(QUERY_PARAM_FROM_SYMBOLS) fromSym: String,
                          @Query(QUERY_PARAM_TO_SYMBOLS) toSym: String = "USD")
-    : DtoDetailOfCoinsResponse
+    : DtoCoinInfoJsonContainer
 
 
     companion object {
