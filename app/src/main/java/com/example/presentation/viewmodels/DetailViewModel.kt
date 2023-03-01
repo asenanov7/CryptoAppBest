@@ -1,16 +1,15 @@
 package com.example.presentation.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.data.RepositoryImpl
+import androidx.lifecycle.ViewModel
 import com.example.domain.CoinPriceInfo
 import com.example.domain.GetInfoAboutSingleCoinUseCase
+import javax.inject.Inject
 
-class DetailViewModel(application: Application):AndroidViewModel(application) {
+class DetailViewModel @Inject constructor(
+    private val getInfoAboutSingleCoinUseCase: GetInfoAboutSingleCoinUseCase
+): ViewModel() {
 
-    private val repository = RepositoryImpl(application)
-    private val getInfoAboutSingleCoinUseCase = GetInfoAboutSingleCoinUseCase(repository)
 
     suspend fun getInfoAboutSingleCoinLD(coinSym:String): LiveData<CoinPriceInfo> {
        return getInfoAboutSingleCoinUseCase(coinSym)

@@ -1,6 +1,8 @@
 package com.example.domain
 
-class LoadDataUseCase(private val repository: Repository) {
+import javax.inject.Inject
+
+class LoadDataUseCase @Inject constructor(private val repository: Repository) {
      operator fun invoke(){
         repository.loadData()
     }

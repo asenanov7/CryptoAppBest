@@ -1,5 +1,6 @@
 package com.example.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,9 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.cryptoapp2.databinding.DetailInfoFragmentBinding
+import com.example.di.component
 import com.example.presentation.viewmodels.DetailViewModel
+import com.example.presentation.viewmodels.ViewModelFactory
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class DetailInfoFragment() : Fragment() {
 
@@ -18,9 +22,19 @@ class DetailInfoFragment() : Fragment() {
     private val binding: DetailInfoFragmentBinding
         get() = _binding ?: throw Exception("DetailInfoFragment == null")
 
-    private val viewModel by lazy { ViewModelProvider(requireActivity())[DetailViewModel::class.java] }
-    private val coinSym by lazy { requireArguments().getString(KEY_COIN_NAME) }
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
+    private lateinit var viewModel: DetailViewModel
+
+    private val detailSubcomponent by lazy {
+        requireActivity().component.getDetailInfoSubcomponentFactory().create()
+    }
+
+    override fun onAttach(context: Context) {
+        detailSubcomponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,9 +47,10 @@ class DetailInfoFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
 
-        lifecycleScope.launch {
-            coinSym?.let {
+        val coinSym = requireArguments().getString(KEY_COIN_NAME)?.let {
+            lifecycleScope.launch {
                 viewModel.getInfoAboutSingleCoinLD(it).observe(viewLifecycleOwner) { dynamicInfo ->
                     Picasso.get().load(dynamicInfo.imageUrl).into(binding.imageViewDetailCoin)
                     with(dynamicInfo) {

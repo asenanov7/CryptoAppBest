@@ -1,32 +1,28 @@
 package com.example.data
 
 import android.app.Application
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.example.data.database.MapperDB
-import com.example.data.database.room.DatabaseCoins
-import com.example.data.network.MapperDTO
-import com.example.data.network.retrofit.ApiFactory
+import com.example.data.database.room.DatabaseCoinsDao
 import com.example.data.utils.getFormattedLastUpdateTime
 import com.example.data.utils.getFullImage
 import com.example.data.workers.LoadDataWorker
-import com.example.domain.Repository
 import com.example.domain.CoinPriceInfo
-import kotlinx.coroutines.delay
+import com.example.domain.Repository
+import javax.inject.Inject
 
-class RepositoryImpl(private val application: Application) : Repository {
-
-    private val mapperDB = MapperDB()
-
-    private val dao = DatabaseCoins.getInstance(application).getDao()
+class RepositoryImpl @Inject constructor (
+    private val mapperDB: MapperDB,
+    private val databaseDao: DatabaseCoinsDao,
+    private val application: Application
+        ) : Repository {
 
     override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
 
-        val temp = dao.getPriceList()
+        val temp = databaseDao.getPriceList()
         val mediatorLiveData = MediatorLiveData<List<CoinPriceInfo>>()
             .apply {
                 addSource(temp) {
@@ -41,7 +37,7 @@ class RepositoryImpl(private val application: Application) : Repository {
     }
 
     override suspend fun getDetailInfoAboutSingleCoin(coinSym: String): LiveData<CoinPriceInfo> {
-        val coinPriceInfoDbModelLD = dao.getPriceInfoAboutCoin(coinSym)
+        val coinPriceInfoDbModelLD = databaseDao.getPriceInfoAboutCoin(coinSym)
         val mediatorLiveData = MediatorLiveData<CoinPriceInfo>()
             .apply {
                 addSource(coinPriceInfoDbModelLD) {
@@ -58,7 +54,7 @@ class RepositoryImpl(private val application: Application) : Repository {
         workManager.enqueueUniqueWork(
             LoadDataWorker.NAME,
             ExistingWorkPolicy.REPLACE,
-            LoadDataWorker.makeRequest()
+            LoadDataWorker.makeRequest()  //создание воркера
         )
     }
 

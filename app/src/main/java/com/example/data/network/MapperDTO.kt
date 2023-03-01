@@ -2,8 +2,9 @@ package com.example.data.network
 
 import com.example.domain.CoinPriceInfo
 import com.google.gson.Gson
+import javax.inject.Inject
 
-class MapperDTO {
+class MapperDTO @Inject constructor() {
 
     fun mapDtoToEntity(dtoCoinPriceInfo: DtoCoinPriceInfo): CoinPriceInfo {
         return CoinPriceInfo(

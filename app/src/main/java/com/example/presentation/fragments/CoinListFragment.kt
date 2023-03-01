@@ -1,5 +1,6 @@
 package com.example.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,9 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.cryptoapp2.R
 import com.example.cryptoapp2.databinding.CoinListFragmentBinding
+import com.example.di.component
 import com.example.presentation.recycler.AdapterOfCoins
 import com.example.presentation.viewmodels.ListOfCoinsViewModel
+import com.example.presentation.viewmodels.ViewModelFactory
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class CoinListFragment : Fragment() {
@@ -23,9 +27,25 @@ class CoinListFragment : Fragment() {
     private val binding: CoinListFragmentBinding
         get() = _binding ?: throw Exception("CoinListFragment == null")
 
-    private val viewModel
-             by lazy { ViewModelProvider(requireActivity())[ListOfCoinsViewModel::class.java] }
+    private val listSubcomponent by lazy {
+        requireActivity().component.getCoinListSubcomponentFactory().create()
+    }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var adapterOfCoins: AdapterOfCoins
+
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity(), viewModelFactory)[ListOfCoinsViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        listSubcomponent.inject(this)
+        super.onAttach(context)
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isLand = requireArguments().getBoolean(KEY_MODE)
@@ -43,7 +63,6 @@ class CoinListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapterOfCoins = AdapterOfCoins()
         binding.rvCoinPriceList.adapter = adapterOfCoins
 
         adapterOfCoins.coinCardClickListener = {
@@ -53,7 +72,6 @@ class CoinListFragment : Fragment() {
                 launchDetailFragmentLand(it.fromSymbol)
             }
         }
-
 
         lifecycleScope.launch {
             viewModel.getTopCoinsLD().observe(viewLifecycleOwner) {

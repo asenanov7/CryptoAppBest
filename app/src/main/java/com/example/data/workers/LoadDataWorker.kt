@@ -2,29 +2,43 @@ package com.example.data.workers
 
 import android.content.Context
 import android.util.Log
-import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.data.database.MapperDB
-import com.example.data.database.room.DatabaseCoins
+import com.example.data.database.room.DatabaseCoinsDao
 import com.example.data.network.MapperDTO
-import com.example.data.network.retrofit.ApiFactory
+import com.example.data.network.retrofit.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class LoadDataWorker(
+
     context: Context,
     workerParameters: WorkerParameters,
-) : Worker(context, workerParameters) {
+    private val api: ApiService,
+    private val dao: DatabaseCoinsDao,
+    private val mapperDB: MapperDB,
+    private val mapperDTO: MapperDTO,
 
-    private val api = ApiFactory.apiService
-    private val dao = DatabaseCoins.getInstance(context).getDao()
+    ) : Worker(context, workerParameters) {
 
-    private val mapperDB = MapperDB()
-    private val mapperDTO = MapperDTO()
+    class Factory @Inject constructor(
+        private val api: ApiService,
+        private val dao: DatabaseCoinsDao,
+        private val mapperDB: MapperDB,
+        private val mapperDTO: MapperDTO,
+    ) : ChildWorkerFactory {
+        override fun create(context: Context, workerParameters: WorkerParameters, ): ListenableWorker {
+            return LoadDataWorker(
+                context, workerParameters, api, dao, mapperDB, mapperDTO
+            )
+        }
+    }
 
     override fun doWork(): Result {
         val scope = CoroutineScope(Dispatchers.IO)

@@ -3,23 +3,24 @@ package com.example.presentation.viewmodels
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.RepositoryImpl
 import com.example.domain.GetTopCoinsUseCase
 import com.example.domain.LoadDataUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ListOfCoinsViewModel(application: Application):AndroidViewModel(application) {
+class ListOfCoinsViewModel @Inject constructor(
+    private val getTopCoinsUseCase: GetTopCoinsUseCase,
+    private val loadDataUseCase: LoadDataUseCase,
+) : ViewModel() {
 
-    private val repository = RepositoryImpl(application)
-
-    private val getTopCoinsUseCase = GetTopCoinsUseCase(repository)
-    private val loadDataUseCase = LoadDataUseCase(repository)
 
     suspend fun getTopCoinsLD() = getTopCoinsUseCase()
 
     init {
-            loadDataUseCase()
+        loadDataUseCase()
     }
 
 }

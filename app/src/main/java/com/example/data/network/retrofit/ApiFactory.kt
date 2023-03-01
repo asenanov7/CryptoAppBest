@@ -1,5 +1,6 @@
 package com.example.data.network.retrofit
 
+import com.example.di.ApplicationScope
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create

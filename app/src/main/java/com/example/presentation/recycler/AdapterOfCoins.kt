@@ -10,8 +10,9 @@ import com.example.cryptoapp2.databinding.ItemCoinOnListBinding
 import com.example.domain.CoinPriceInfo
 import com.example.presentation.recycler.AdapterOfCoins.*
 import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
-class AdapterOfCoins() : ListAdapter<CoinPriceInfo, CoinInfoViewHolder>(CoinsDiffCallback()) {
+class AdapterOfCoins @Inject constructor() : ListAdapter<CoinPriceInfo, CoinInfoViewHolder>(CoinsDiffCallback()) {
 
     lateinit var coinCardClickListener: (CoinPriceInfo) -> Unit
 

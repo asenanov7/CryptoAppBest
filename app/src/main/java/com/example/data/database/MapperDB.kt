@@ -1,8 +1,9 @@
 package com.example.data.database
 
 import com.example.domain.CoinPriceInfo
+import javax.inject.Inject
 
-class MapperDB {
+class MapperDB @Inject constructor(){
 
     fun mapEntityToDbModel(coinPriceInfo: CoinPriceInfo): DbModelCoinPriceInfo {
         return DbModelCoinPriceInfo(
