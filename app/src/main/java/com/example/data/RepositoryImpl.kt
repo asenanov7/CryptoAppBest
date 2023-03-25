@@ -14,11 +14,11 @@ import com.example.domain.CoinPriceInfo
 import com.example.domain.Repository
 import javax.inject.Inject
 
-class RepositoryImpl @Inject constructor (
+class RepositoryImpl @Inject constructor(
     private val mapperDB: MapperDB,
     private val databaseDao: DatabaseCoinsDao,
-    private val application: Application
-        ) : Repository {
+    private val application: Application,
+) : Repository {
 
     override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
 
@@ -40,7 +40,7 @@ class RepositoryImpl @Inject constructor (
         val coinPriceInfoDbModelLD = databaseDao.getPriceInfoAboutCoin(coinSym)
         val mediatorLiveData = MediatorLiveData<CoinPriceInfo>()
             .apply {
-                addSource(coinPriceInfoDbModelLD) {
+                addSource(coinPriceInfoDbModelLD) {//Слушать изменния из какой то ЛД
                     it.imageUrl = getFullImage(it.imageUrl)
                     it.lastUpdate = getFormattedLastUpdateTime(it.lastUpdate)
                     value = mapperDB.mapDbModelToEntity(it)
@@ -50,12 +50,13 @@ class RepositoryImpl @Inject constructor (
     }
 
     override fun loadData() {
-        val workManager = WorkManager.getInstance(application)
-        workManager.enqueueUniqueWork(
-            LoadDataWorker.NAME,
-            ExistingWorkPolicy.REPLACE,
-            LoadDataWorker.makeRequest()  //создание воркера
-        )
+        WorkManager.getInstance(application).apply {
+            enqueueUniqueWork(
+                LoadDataWorker.NAME,
+                ExistingWorkPolicy.REPLACE,
+                LoadDataWorker.makeRequest()  //создание воркера
+            )
+        }
     }
 
 

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +24,7 @@ class CoinListFragment : Fragment() {
 
     private var isLand by Delegates.notNull<Boolean>()
 
-    private var _binding: CoinListFragmentBinding? = null
-    private val binding: CoinListFragmentBinding
-        get() = _binding ?: throw Exception("CoinListFragment == null")
+    private val binding: CoinListFragmentBinding by viewBinding()
 
     private val listSubcomponent by lazy {
         requireActivity().component.getCoinListSubcomponentFactory().create()
@@ -56,8 +55,7 @@ class CoinListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = CoinListFragmentBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.coin_list_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,10 +80,6 @@ class CoinListFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     private fun launchDetailFragmentPortrait(fsym: String) {
         val fragment = DetailInfoFragment.makeDetailInfoFragment(fsym)
