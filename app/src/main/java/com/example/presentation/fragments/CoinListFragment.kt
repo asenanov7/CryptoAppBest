@@ -8,14 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.cryptoapp2.R
 import com.example.cryptoapp2.databinding.CoinListFragmentBinding
 import com.example.di.component
 import com.example.presentation.recycler.AdapterOfCoins
 import com.example.presentation.viewmodels.ListOfCoinsViewModel
 import com.example.presentation.viewmodels.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -72,10 +75,12 @@ class CoinListFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.getTopCoinsLD().observe(viewLifecycleOwner) {
-                adapterOfCoins.submitList(it)
-                binding.rvCoinPriceList.itemAnimator = null
-                Log.d("ARSEN", "submitAdapter $it ")
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.getTopCoinsLD().collectLatest {
+                    adapterOfCoins.submitList(it)
+                    binding.rvCoinPriceList.itemAnimator = null
+                    Log.d("ARSEN", "submitAdapter $it ")
+                }
             }
         }
     }

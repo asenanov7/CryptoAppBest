@@ -1,7 +1,6 @@
 package com.example.data
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
@@ -12,6 +11,10 @@ import com.example.data.utils.getFullImage
 import com.example.data.workers.LoadDataWorker
 import com.example.domain.CoinPriceInfo
 import com.example.domain.Repository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
@@ -20,34 +23,13 @@ class RepositoryImpl @Inject constructor(
     private val application: Application,
 ) : Repository {
 
-    override suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>> {
+    override suspend fun getTopCoins(): Flow<List<CoinPriceInfo>> =
+            databaseDao.getPriceList().map { it.map { mapperDB.mapDbModelToEntity(it) } }
 
-        val temp = databaseDao.getPriceList()
-        val mediatorLiveData = MediatorLiveData<List<CoinPriceInfo>>()
-            .apply {
-                addSource(temp) {
-                    it.map {
-                        it.imageUrl = getFullImage(it.imageUrl)
-                        it.lastUpdate = getFormattedLastUpdateTime(it.lastUpdate)
-                    }
-                    value = it.map { mapperDB.mapDbModelToEntity(it) }
-                }
-            }
-        return mediatorLiveData
-    }
 
-    override suspend fun getDetailInfoAboutSingleCoin(coinSym: String): LiveData<CoinPriceInfo> {
-        val coinPriceInfoDbModelLD = databaseDao.getPriceInfoAboutCoin(coinSym)
-        val mediatorLiveData = MediatorLiveData<CoinPriceInfo>()
-            .apply {
-                addSource(coinPriceInfoDbModelLD) {//Слушать изменния из какой то ЛД
-                    it.imageUrl = getFullImage(it.imageUrl)
-                    it.lastUpdate = getFormattedLastUpdateTime(it.lastUpdate)
-                    value = mapperDB.mapDbModelToEntity(it)
-                }
-            }
-        return mediatorLiveData
-    }
+    override suspend fun getDetailInfoAboutSingleCoin(coinSym: String): Flow<CoinPriceInfo> =
+        databaseDao.getPriceInfoAboutCoin(coinSym).map { mapperDB.mapDbModelToEntity(it) }
+
 
     override fun loadData() {
         WorkManager.getInstance(application).apply {

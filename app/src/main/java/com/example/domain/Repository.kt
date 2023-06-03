@@ -1,12 +1,12 @@
 package com.example.domain
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     fun loadData()
 
-    suspend fun getTopCoins(): LiveData<List<CoinPriceInfo>>
+    suspend fun getTopCoins(): Flow<List<CoinPriceInfo>>
 
-    suspend fun getDetailInfoAboutSingleCoin(coinSym:String): LiveData<CoinPriceInfo>
+    suspend fun getDetailInfoAboutSingleCoin(coinSym:String): Flow<CoinPriceInfo>
 
 }

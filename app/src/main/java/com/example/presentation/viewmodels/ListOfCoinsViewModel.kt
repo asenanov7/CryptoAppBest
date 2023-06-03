@@ -1,8 +1,11 @@
 package com.example.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.domain.GetTopCoinsUseCase
 import com.example.domain.LoadDataUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
 class ListOfCoinsViewModel @Inject constructor(
@@ -12,6 +15,7 @@ class ListOfCoinsViewModel @Inject constructor(
 
 
     suspend fun getTopCoinsLD() = getTopCoinsUseCase()
+        .shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
     init {
         loadDataUseCase()

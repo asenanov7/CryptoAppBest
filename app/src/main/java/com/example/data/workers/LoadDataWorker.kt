@@ -10,6 +10,8 @@ import com.example.data.database.MapperDB
 import com.example.data.database.room.DatabaseCoinsDao
 import com.example.data.network.MapperDTO
 import com.example.data.network.retrofit.ApiService
+import com.example.data.utils.getFormattedLastUpdateTime
+import com.example.data.utils.getFullImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -60,6 +62,11 @@ class LoadDataWorker(
 
                     val listModelCoinPriceInfo =
                         mapperDB.mapListEntityToListDBModelCoinPriceInfo(listCoinPriceInfo)
+
+                    listModelCoinPriceInfo.map {
+                        it.imageUrl = getFullImage(it.imageUrl)
+                        it.lastUpdate = getFormattedLastUpdateTime(it.lastUpdate)
+                    }
 
                     dao.insertDataOnDatabase(listModelCoinPriceInfo)
                 } catch (_: Exception) {

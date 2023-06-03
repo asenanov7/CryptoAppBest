@@ -6,13 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.cryptoapp2.databinding.DetailInfoFragmentBinding
 import com.example.di.component
 import com.example.presentation.viewmodels.DetailViewModel
 import com.example.presentation.viewmodels.ViewModelFactory
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,18 +52,23 @@ class DetailInfoFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[DetailViewModel::class.java]
 
-        val coinSym = requireArguments().getString(KEY_COIN_NAME)?.let {
-            lifecycleScope.launch {
-                viewModel.getInfoAboutSingleCoinLD(it).observe(viewLifecycleOwner) { dynamicInfo ->
-                    Picasso.get().load(dynamicInfo.imageUrl).into(binding.imageViewDetailCoin)
-                    with(dynamicInfo) {
-                        binding.textViewFsym.text = fromSymbol
-                        binding.textViewTsym.text = toSymbol
-                        binding.priceDetail.text = "Цена $price"
-                        binding.minPriceOfDay.text = "Минимум за день $lowDay"
-                        binding.maxPriceOfDay.text = "Максимум за день $highDay"
-                        binding.latestMarket.text = "Последняя сделка на $lastMarket"
-                        binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
+        requireArguments().getString(KEY_COIN_NAME)?.let {
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    viewModel.getInfoAboutSingleCoinLD(it).collectLatest { dynamicInfo ->
+                        if (dynamicInfo.imageUrl.isNotEmpty()) {
+                            Picasso.get().load(dynamicInfo.imageUrl)
+                                .into(binding.imageViewDetailCoin)
+                        }
+                        with(dynamicInfo) {
+                            binding.textViewFsym.text = fromSymbol
+                            binding.textViewTsym.text = toSymbol
+                            binding.priceDetail.text = "Цена $price"
+                            binding.minPriceOfDay.text = "Минимум за день $lowDay"
+                            binding.maxPriceOfDay.text = "Максимум за день $highDay"
+                            binding.latestMarket.text = "Последняя сделка на $lastMarket"
+                            binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
+                        }
                     }
                 }
             }

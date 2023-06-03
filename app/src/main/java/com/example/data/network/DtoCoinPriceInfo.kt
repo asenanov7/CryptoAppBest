@@ -14,7 +14,7 @@ data class DtoCoinPriceInfo (
         val price : String,
 
         @SerializedName("LASTUPDATE")
-        val lastUpdate : String,
+        var lastUpdate : String,
 
         @SerializedName("HIGHDAY")
         val highDay : String,
@@ -26,7 +26,7 @@ data class DtoCoinPriceInfo (
         val lastMarket : String,
 
         @SerializedName("IMAGEURL")
-        val imageUrl : String
+        var imageUrl : String
 
     ):java.io.Serializable
 

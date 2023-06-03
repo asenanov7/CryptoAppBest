@@ -1,10 +1,10 @@
 package com.example.domain
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetTopCoinsUseCase @Inject constructor (private val repository: Repository){
-    suspend operator fun invoke(): LiveData<List<CoinPriceInfo>> {
+    suspend operator fun invoke(): Flow<List<CoinPriceInfo>> {
         return repository.getTopCoins()
     }
 }
