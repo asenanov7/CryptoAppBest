@@ -56,18 +56,20 @@ class DetailInfoFragment() : Fragment() {
                 lifecycleScope.launch {
                     repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     viewModel.getInfoAboutSingleCoinLD(it).collectLatest { dynamicInfo ->
-                        if (dynamicInfo.imageUrl.isNotEmpty()) {
-                            Picasso.get().load(dynamicInfo.imageUrl)
-                                .into(binding.imageViewDetailCoin)
-                        }
-                        with(dynamicInfo) {
-                            binding.textViewFsym.text = fromSymbol
-                            binding.textViewTsym.text = toSymbol
-                            binding.priceDetail.text = "Цена $price"
-                            binding.minPriceOfDay.text = "Минимум за день $lowDay"
-                            binding.maxPriceOfDay.text = "Максимум за день $highDay"
-                            binding.latestMarket.text = "Последняя сделка на $lastMarket"
-                            binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
+                        dynamicInfo?.let {
+                            if (dynamicInfo.imageUrl.isNotEmpty()) {
+                                Picasso.get().load(dynamicInfo.imageUrl)
+                                    .into(binding.imageViewDetailCoin)
+                            }
+                            with(dynamicInfo) {
+                                binding.textViewFsym.text = fromSymbol
+                                binding.textViewTsym.text = toSymbol
+                                binding.priceDetail.text = "Цена $price"
+                                binding.minPriceOfDay.text = "Минимум за день $lowDay"
+                                binding.maxPriceOfDay.text = "Максимум за день $highDay"
+                                binding.latestMarket.text = "Последняя сделка на $lastMarket"
+                                binding.timeOfUpdate.text = "Обновлено: $lastUpdate"
+                            }
                         }
                     }
                 }
